@@ -1,0 +1,155 @@
+﻿@page "/"
+
+@*<div style="height:700px; width:700px;">*@
+    <SfDiagramComponent Height="600px"  Nodes="@NodesCollection" Connectors="@ConnectorCollection"
+                        NodeCreating="@NodeCreate"
+                        ConnectorCreating="@ConnectorCreate"
+                        Constraints="@constraints"
+                        BridgeDirection="Direction.Right">
+        <PageSettings Height="842" Width="595" ShowPageBreaks=true
+                      Orientation="PageOrientation.Portrait"
+                      MultiplePage=true>
+            <PageMargin Left="20" Right="20" Bottom="20" Top="20"></PageMargin>
+            <BackgroundStyle Background="#CEF6F5"></BackgroundStyle>
+        </PageSettings>
+        <SnapSettings Constraints="SnapConstraints.None"></SnapSettings>
+    </SfDiagramComponent>
+@*</div>*@
+  
+@code 
+{
+    DiagramConstraints constraints = DiagramConstraints.Default | DiagramConstraints.Bridging;
+    DiagramObjectCollection<Node> NodesCollection = new DiagramObjectCollection<Node>();
+    DiagramObjectCollection<Connector> ConnectorCollection = new DiagramObjectCollection<Connector>();
+    private void ConnectorCreate(IDiagramObject connector)
+    {
+        Connector diagram_connector = connector as Connector;
+        diagram_connector.BridgeSpace = 40;
+        diagram_connector.HitPadding = 40;
+        diagram_connector.SourcePadding = 10;
+        diagram_connector.TargetPadding = 10;
+        diagram_connector.SourceDecorator = new DecoratorSettings()
+            {
+                Shape = DecoratorShape.Arrow,
+                Style = new ShapeStyle()
+                {
+                    StrokeColor = "blue",
+                    Fill = "yellow",
+                    StrokeWidth = 2
+                }
+            };
+        diagram_connector.TargetDecorator = new DecoratorSettings()
+            {
+                Shape = DecoratorShape.Custom,
+                PathData = "M80.5,12.5 C80.5,19.127417 62.59139,24.5 40.5,24.5 C18.40861,24.5 0.5,19.127417 0.5,12.5 C0.5,5.872583 18.40861,0.5 40.5,0.5 C62.59139,0.5 80.5,5.872583 80.5,12.5 z",
+                Style = new ShapeStyle()
+                {
+                    StrokeColor = "#37909A",
+                    Fill = "#37909A",
+                    StrokeWidth = 1,
+                }
+            };
+    }
+    private void NodeCreate(IDiagramObject obj)
+    {
+        Node diagram_node = obj as Node;
+       // diagram_node.Pivot = new DiagramPoint() { X = 0, Y = 0 };
+        diagram_node.Style = new ShapeStyle()
+            {
+                Fill = "LightGreen",
+                StrokeColor = "red",
+                StrokeWidth = 3,
+                StrokeDashArray = "7,7",
+                Gradient = new LinearGradientBrush()
+                {
+                    X1=0,
+                    Y1=0,
+                    X2= 50,
+                    Y2=50,
+                    GradientStops = new DiagramObjectCollection<GradientStop>()
+                    {
+                        new GradientStop() { Color="white", Offset=0},
+                        new GradientStop() { Color="#4169E1", Offset=100}
+                    }
+                }
+            };
+    }
+
+    protected async override void OnInitialized()
+    {
+        Node node1 = new Node()
+            {
+                ID = "Node1",
+                OffsetX = 280,
+                OffsetY = 190,
+                Height = 140,
+                Width = 140,
+                Style = new ShapeStyle() { Fill = "#6495ED" },
+                Shape = new BasicShape() { Type = NodeShapes.Basic, Shape = NodeBasicShapes.Diamond },
+                Annotations = new DiagramObjectCollection<ShapeAnnotation>()
+                {
+                    new ShapeAnnotation()
+                    {
+                        Content = "Node1"
+                    }
+                }
+            };
+
+        Node node2 = new Node()
+            {
+                ID = "Node2",
+                OffsetX = 282,
+                OffsetY = 380,
+                Height = 70,
+                Width = 110,
+                Style = new ShapeStyle() { Fill = "aqua" },
+                Shape = new BasicShape() { Type = NodeShapes.Basic, Shape = NodeBasicShapes.Rectangle },
+                Annotations = new DiagramObjectCollection<ShapeAnnotation>()
+                {
+                    new ShapeAnnotation()
+                    {
+                        Content = "Node2"
+                    }
+                }
+            };
+        
+        Node node3 = new Node()
+            {
+                ID = "Node3",
+                OffsetX = 460,
+                OffsetY = 190,
+                Height = 70,
+                Width = 110,
+                Style = new ShapeStyle() { Fill = "cyan" },
+                Shape = new BasicShape() { Type = NodeShapes.Basic, Shape = NodeBasicShapes.Rectangle },
+                Annotations = new DiagramObjectCollection<ShapeAnnotation>()
+                {
+                    new ShapeAnnotation()
+                    {
+                        Content = "Node3"
+                    }
+                }
+            };
+        NodesCollection.Add(node1);
+        NodesCollection.Add(node2);
+        NodesCollection.Add(node3);
+
+        Connector connector1 = new Connector()
+            {
+                ID = "Connector1",
+                Type = ConnectorSegmentType.Straight,
+                SourceID = "Node1",
+                TargetID = "Node2",
+            };
+        Connector connector2 = new Connector()
+            {
+                ID = "Connector2",
+                Type = ConnectorSegmentType.Straight,
+                SourceID = "Node1",
+                TargetID = "Node3"
+            };
+
+        ConnectorCollection.Add(connector1);
+        ConnectorCollection.Add(connector2);
+    }
+}
